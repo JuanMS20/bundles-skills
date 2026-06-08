@@ -7,6 +7,8 @@ skills:
   - zoom-out
   - tdd
   - code-review
+  - feature-dev
+  - frontend-design
 instruction: |
   FASES SECUENCIALES — no avances sin autorización explícita del usuario.
 
@@ -17,6 +19,13 @@ instruction: |
   ## Transversal
   Aplica `anti-hallucination` durante todo el ciclo.
   Si hay skill de patrones para el stack detectado, úsala como fuente principal.
+
+  ## Skills disponibles en este bundle
+  - `zoom-out` — exploración de código existente (brownfield)
+  - `tdd` — red-green-refactor loop estricto
+  - `code-review` — revisión estática post-implementación
+  - `feature-dev` — workflow 7 fases (discovery → architecture → implementation → review). Usar cuando la feature es compleja, requiere análisis de codebase, propuesta de arquitectura, y aprobación explícita antes de codificar.
+  - `frontend-design` — diseño frontend distintivo anti-AI-slop. Usar cuando la feature involucra UI, dashboard, landing page, o cualquier interfaz visual. Activa ANTES de escribir HTML/CSS para establecer framework de diseño.
 
   ## PASO 0 — Contexto (silencioso)
   Detecta internamente: stack (package.json, requirements.txt, etc.), CONTEXT.md, ADRs previos.
