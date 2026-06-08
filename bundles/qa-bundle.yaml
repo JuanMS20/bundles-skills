@@ -1,0 +1,67 @@
+name: qa-bundle
+description: |
+  Quality Assurance completo: testing sistemático, fix incremental con TDD,
+  verificación runtime obligatoria. Detecta si ya pasó por dev-cycle.
+skills:
+  - qa-testing
+  - anti-hallucination
+  - zoom-out
+  - tdd
+  - diagnose
+instruction: |
+  FASES SECUENCIALES — no avances sin autorización del usuario.
+
+  ## Handoff
+  - INPUT: Código + tests (puede venir de dev-cycle o ser código legacy)
+  - OUTPUT: Bugs resueltos + tests pasando + checklist runtime completo
+
+  ## Transversal
+  Aplica `anti-hallucination`. Un bug a la vez. NUNCA "debería funcionar" sin evidencia.
+
+  ## Detección de contexto
+  Antes de FASE 1, evalúa:
+  - Si hay tests existentes PASANDO + code-review reciente → viene de dev-cycle.
+    Salta FASE 0, ve directo a FASE 1 (testing).
+  - Si no hay tests → empieza desde FASE 0.
+
+  ## FASE 0 — Entender (solo si no hay tests)
+  Carga `zoom-out`. Identifica stack, arquitectura, entry points, test infra existente.
+  Presenta comprensión al usuario. ESPERA.
+
+  ## FASE 1 — Testing
+  Carga `qa-testing`. Ejecuta 4 capas: smoke → functional → integration → security quick check.
+  Cada bug → TODO item con: severidad (CRITICAL/HIGH/MEDIUM/LOW), repro steps, expected vs actual, archivo.
+  Presenta lista completa. ESPERA aprobación del plan de fixes.
+
+  ## FASE 2 — Fix Plan
+  Ordena bugs por severidad (CRITICAL primero). Identifica dependencias entre bugs.
+  ESPERA aprobación antes de tocar código.
+
+  ## FASE 3 — Fixes (TDD)
+  Para cada bug: RED (test que falle) → GREEN (fix mínimo) → VERIFY (no rompió otros tests).
+  Bugs difíciles → carga `diagnose`. No refactorizar durante fixes.
+
+  ## FASE 4 — Verificación Final
+  Suite completa de tests + smoke test end-to-end.
+  Confirma que solo se cambió lo planificado.
+
+  ## FASE 5 — Entrega Runtime (OBLIGATORIA)
+  SIN esta fase, NUNCA declarar "listo". Ejecuta cada check con comando real:
+
+  | # | Check | Método |
+  |---|-------|--------|
+  | 1 | Deps instaladas | Instala SIN errores |
+  | 2 | Build/compilación | Ejecuta bundler/compilador SIN errores |
+  | 3 | App arranca o tests pasan | Ejecuta entry point o suite |
+  | 4 | Sin errores tipo/lint | Ejecuta type checker o linter |
+  | 5 | Imports resuelven | No hay refs a módulos inexistentes |
+  | 6 | Sin deps fantasma | No hay imports de paquetes no instalados |
+
+  Adaptación: web → `npm run build`, backend → `npm start`/`python manage.py runserver`,
+  lib → `npm test`/`pytest`, scripts → ejecuta con datos prueba.
+  Cada PASS requiere output del comando. Cada FAIL → error exacto + archivo.
+  Si no puedes ejecutar algo → DECLARA qué no verificaste.
+
+  Formato entrega:
+  Stack: [X] | Comandos: [lista]
+  [#1 PASS (evidencia), #2 PASS, ...] → Veredicto: LISTO / NO LISTO

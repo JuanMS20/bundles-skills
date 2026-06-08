@@ -1,0 +1,158 @@
+name: user-chaos
+description: "Testing post-judge: usuario torpe + UX + auditoría externa. Encuentra anomalías que los bundles dev/qa/judge no detectan — probando la app como usuario torpe (multi-plataforma), validando que la UX sea real (no AI slop), y como atacante que intenta romperla."
+skills:
+  - user-chaos-tester
+  - judge-ux-vibe-check
+  - reverse-audit
+  - anti-hallucination
+  - zoom-out
+instruction: |
+  FASES SECUENCIALES — no avances sin que cada fase pase o el usuario autorice.
+
+  ## Skills disponibles
+  - zoom-out: contexto del sistema (FASE 0)
+  - user-chaos-tester: testing como usuario torpe, multi-plataforma (FASE 1)
+  - judge-ux-vibe-check: validación de UX real, AI slop detection (FASE 2)
+  - reverse-audit: análisis ofensivo multi-plataforma, intenta romper todo (FASE 3)
+  - anti-hallucination: verificación de claims (todas las fases)
+
+  ## Contexto
+  Este bundle es la CAPA FINAL después de dev-qa-judge. Los bundles anteriores verifican el código desde DENTRO. Este verifica la app desde FUERA — en cualquier plataforma.
+
+  ## FASE 0 — Contexto (zoom-out)
+  Ejecuta zoom-out para entender:
+  - ¿Qué tipo de app es? (web, móvil, juego, desktop, CLI)
+  - ¿Qué stack usa?
+  - ¿Dónde está desplegada?
+  - ¿Cuáles son las features principales?
+
+  Esto da contexto para las fases siguientes. NO pases a FASE 1 sin entender qué estás probando.
+
+  ## FASE 1 — Usuario Torpe (user-chaos-tester)
+  Ejecuta el protocolo COMPLETO de user-chaos-tester:
+  1. Detección de plataforma + observación visual (5 min)
+  2. Interacción caótica — vectores universales + específicos por plataforma (15 min)
+  3. Verificación de resultados en DB/store
+  4. Reporte con severidades
+
+  **Criterio de paso:** CRITICAL = 0 para continuar. Si hay CRITICAL → FIX primero, re-test después.
+  Espera aprobación del usuario antes de continuar.
+
+  ## FASE 2 — UX Real (judge-ux-vibe-check)
+  Ejecuta el protocolo COMPLETO de judge-ux-vibe-check:
+  1. Primera impresión (5 segundos)
+  2. Navegación y flujo
+  3. Formularios e inputs
+  4. Feedback y estados
+  5. Responsive y accesibilidad
+  6. Consistencia visual
+  7. AI slop detection
+  8. Veredicto con score por categoría
+
+  **Criterio de paso:** Score general UX >= 50 (no AI SLOP). Si < 50 → rediseñar.
+  Espera aprobación del usuario antes de continuar.
+
+  ## FASE 3 — Análisis Ofensivo (reverse-audit)
+  Ejecuta el protocolo COMPLETO de reverse-audit:
+  1. Reconocimiento — detectar plataforma, recopilar info, ENUMERAR ENTIDADES
+  2. OWASP Top 10 (2025) — SOLO si es web
+  3. Vectores de ataque específicos de plataforma (web/juegos/móvil/CLI/desktop)
+  4. Ataque cross-entity — probar combinaciones entre entidades enumeradas
+  5. Verificación de datos en DB/store
+  6. Reporte con severidades
+
+  **Criterio de paso:** CRITICAL/HIGH = 0 para continuar. Si hay CRITICAL/HIGH → FIX primero.
+  Espera aprobación del usuario antes de continuar.
+
+  ## FASE 4 — Veredicto Combinado
+  Consolida hallazgos de FASE 1, 2 y 3 en un veredicto único:
+
+  ESTADO: [APROBADO / RECHAZADO / CONDICIONAL]
+
+  Por fase:
+  - User Chaos: [PASSED/FAILED] + hallazgos clave
+  - UX Vibe Check: [PASSED/FAILED] + score + señales AI slop
+  - Reverse Audit: [PASSED/FAILED] + hallazgos clave
+
+  BLOQUEANTES: lista numerada (CRITICAL + HIGH combinados)
+  ADVERTENCIAS: lista numerada (WARNING + MEDIUM)
+  FORTALEZAS: qué se manejó bien
+
+  PRÓXIMOS PASOS: según estado y escalation matrix
+
+  ## Escalation Matrix (qué hacer con los hallazgos)
+  Después del veredicto, no solo reportar — derivar:
+
+  | Severidad | Origen | Acción |
+  |-----------|--------|--------|
+  | CRITICAL (User Chaos) | UX rota, datos perdidos | Fix directo con TDD. Re-test de la interacción que falló |
+  | Score UX < 50 (Vibe Check) | AI slop, UX no usable | Rediseñar UI. Re-ejecutar vibe check |
+  | CRITICAL/HIGH (Reverse Audit) | Explotable: security, economy, data | Fix con dev-cycle si es estructural, o TDD directo si es puntual |
+  | WARNING (User Chaos) | UX confusa, edge case | Dejar como backlog. No bloquea launch |
+  | MEDIUM/LOW (Reverse Audit) | Hardening | Dejar como backlog. Documentar como deuda técnica |
+
+  Regla: si hay más de 3 CRITICAL → volver a dev-cycle completo (algo estructural está mal).
+  Si 1-2 CRITICAL → fix puntual con TDD, no necesario re-correr todo el pipeline.
+
+  ## Checklist de Trabajo
+  Marca cada item cuando se complete. NO avances a la siguiente fase si hay items sin marcar en la actual.
+
+  ### Pre-flight
+  - [ ] App levantada y accesible
+  - [ ] Stack identificado (framework, lenguaje, DB)
+  - [ ] Plataforma identificada (web/móvil/juego/desktop/CLI)
+  - [ ] Features principales documentadas
+
+  ### FASE 1 — User Chaos
+  - [ ] Detección de plataforma completada
+  - [ ] Observación visual (5 min)
+  - [ ] Autenticación (vacío, inválido, olvidé contraseña)
+  - [ ] Entrada de datos (vacíos, unicode, límites, fechas inválidas)
+  - [ ] Confusión de usuario (botón equivocado, abandonar flujo, orden incorrecto)
+  - [ ] Timing (clicks rápidos, double submit)
+  - [ ] Concurrencia (2 instancias mismo recurso)
+  - [ ] Copy-paste (Word/Excel, RTL, strings gigantes)
+  - [ ] Vectores específicos de plataforma ejecutados
+  - [ ] Verificación en DB/store para cada modificación
+  - [ ] Reporte con severidades
+  - [ ] CRITICAL = 0 (si hay → fix antes de continuar)
+
+  ### FASE 2 — UX Vibe Check
+  - [ ] Primera impresión evaluada (5 segundos)
+  - [ ] Navegación y flujo verificados
+  - [ ] Formularios e inputs validados
+  - [ ] Feedback y estados verificados
+  - [ ] Responsive y accesibilidad probados
+  - [ ] Consistencia visual evaluada
+  - [ ] AI slop detection ejecutada
+  - [ ] Veredicto con score por categoría
+  - [ ] Score UX >= 50 (si < 50 → rediseñar)
+
+  ### FASE 3 — Reverse Audit
+  - [ ] Plataforma detectada (web/móvil/juego/desktop/CLI)
+  - [ ] Reconocimiento completado (info pública, attack surface)
+  - [ ] Entidades enumeradas (usuarios, roles, items, recursos — todos los tipos)
+  - [ ] Múltiples entidades probadas por tipo (no solo una)
+  - [ ] OWASP A01-A10 verificado (SOLO si es web)
+  - [ ] Vectores específicos de plataforma ejecutados
+  - [ ] Ataque cross-entity ejecutado (IDOR, permisos cruzados, race conditions)
+  - [ ] Verificación de datos en DB/store tras cada exploit
+  - [ ] Vectores no probados documentados (requieren herramientas no disponibles)
+  - [ ] Reporte con severidades
+  - [ ] CRITICAL/HIGH = 0 (si hay → fix antes de continuar)
+
+  ### FASE 4 — Veredicto
+  - [ ] Hallazgos de FASE 1 consolidados
+  - [ ] Hallazgos de FASE 2 consolidados (score UX + AI slop)
+  - [ ] Hallazgos de FASE 3 consolidados
+  - [ ] ESTADO asignado (APROBADO / RECHAZADO / CONDICIONAL)
+  - [ ] BLOQUEANTES listados
+  - [ ] ADVERTENCIAS listadas
+  - [ ] FORTALEZAS documentadas
+  - [ ] PRÓXIMOS PASOS definidos
+
+  ### Anti-hallucination
+  Durante todo el pipeline, aplica anti-hallucination:
+  - No asumas que un endpoint existe sin verificar
+  - No asumas que un ataque falla sin probarlo
+  - Cita evidencia (logs, curl output, screenshots) para cada hallazgo

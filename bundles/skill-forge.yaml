@@ -1,0 +1,93 @@
+name: skill-forge
+description: Pipeline de creacion, auditoria y mantenimiento de skills Hermes — crea skills nuevas (general o stack-specific), audita skills existentes por calidad, y repara problemas sin romper contenido util.
+skills:
+  - write-a-skill
+  - write-stack-skill
+instruction: |
+  Pipeline de creacion, auditoria y mantenimiento de skills de alta calidad para Hermes.
+
+  ## MODO 1 — CREAR (nueva skill)
+
+  FASE 0 — Clasificacion:
+  Determina que tipo de skill se necesita:
+  - STACK: framework, libreria, engine o stack especifico (React, Flutter, Roblox, FastAPI, etc.)
+    → seguir flujo de write-stack-skill.
+  - GENERAL: workflow, procedimiento, o skill transversal (TDD, debugging, code review, etc.)
+    → seguir flujo de write-a-skill.
+  - Si no esta claro, pregunta antes de continuar.
+
+  FASE 1 — Ejecucion del flujo correspondiente:
+  Si STACK → ejecuta write-stack-skill completo (Research → Estructura → Verificacion → Registro).
+  Si GENERAL → ejecuta write-a-skill completo (Requirements → Draft → Review).
+
+  FASE 2 — Quality Gate (comun a ambos flujos):
+    [ ] Description incluye triggers especificos ("Use when...")
+    [ ] SKILL.md < 200 lineas (si pasa, split en references/)
+    [ ] Cero info que sera stale en <30 dias
+    [ ] Ejemplos concretos, no prosa abstracta
+    [ ] Terminologia consistente
+    [ ] Si es stack: toda API tiene fuente URL citada
+
+  ## MODO 2 — AUDITAR (skills existentes)
+
+  Se activa cuando el usuario pide: auditar, revisar, verificar, check, maintenance, o menciona skills especificas a revisar.
+
+  FASE A — Inventario:
+  1. Ejecutar `skills_list` para obtener todas las skills instaladas.
+  2. Si el usuario especifico skills concretas, filtrar a esas.
+  3. Si no, auditar TODAS las skills del sistema.
+
+  FASE B — Diagnostico por skill:
+  Para cada skill, cargar con `skill_view` y verificar:
+
+  CALIDAD ESTRUCTURAL:
+    [ ] SKILL.md < 200 lineas
+    [ ] Description tiene triggers ("Use when...")
+    [ ] Description < 1024 chars
+    [ ] Frontmatter YAML valido (name + description)
+    [ ] Secciones con ejemplos concretos (no solo prosa)
+
+  CALIDAD DE CONTENIDO:
+    [ ] Sin info que sera stale en <30 dias (versiones exactas, URLs fragiles)
+    [ ] Terminologia consistente dentro de la skill
+    [ ] Sin contenido duplicado entre SKILL.md y references/
+    [ ] Pitfalls documentados si aplica
+
+  CALIDAD DE REFERENCIAS:
+    [ ] linked_files declarados existen fisicamente
+    [ ] Archivos en el directorio que no estan en linked_files (huergfanos)
+    [ ] Scripts en scripts/ son ejecutables/validos
+
+  Clasificar cada skill como: OK | WARNING | NEEDS_FIX
+  Generar reporte con hallazgos concretos (linea, seccion, problema).
+
+  FASE C — Reparacion:
+  Para cada skill con NEEDS_FIX o WARNING:
+
+  REGLAS DE ORO — NO ROMPER:
+  1. NUNCA eliminar contenido util. Si una seccion es larga, moverla a references/, no borrarla.
+  2. NUNCA reescribir toda la skill. Usar patch quirurgico para el problema especifico.
+  3. ANTES de modificar, mostrar al usuario exactamente que se va a cambiar y por que.
+  4. Si el cambio es ambiguo (contenido que podria ser util o no), preguntar.
+  5. Preservar TODO el frontmatter existente (tags, metadata, etc.).
+
+  PROBLEMAS COMUNES Y SUS REPARACIONES:
+  - SKILL.md > 200 lineas → identificar secciones largas, moverlas a references/<nombre>.md,
+    reemplazar en SKILL.md con "See [references/<nombre>.md]" y actualizar linked_files.
+  - Description sin triggers → reescribir description manteniendo el mensaje original + agregar triggers.
+  - Contenido stale → marcar con [NEEDS UPDATE] o reemplazar con version generica, NO eliminar.
+  - Archivos huerfanos → agregar a linked_files en SKILL.md.
+  - Referencias rotas → verificar si el archivo existe, corregir ruta o eliminar referencia.
+
+  FASE D — Verificacion post-reparacion:
+  Despues de cada reparacion:
+  1. `skill_view` para confirmar que la skill carga sin errores.
+  2. Verificar que linked_files resuelve correctamente.
+  3. Confirmar que el contenido movido a references/ esta accesible.
+
+  ## REGLAS TRANSVERSALES
+
+  - FASES SECUENCIALES — no avances sin autorizacion del usuario.
+  - Presenta resultados de cada fase y espera confirmacion.
+  - Si una reparacion implica riesgo de perder contenido, muestra el diff y pide aprobacion explicita.
+  - Al finalizar, genera resumen de cambios: que se creo, que se reparo, que quedo igual.

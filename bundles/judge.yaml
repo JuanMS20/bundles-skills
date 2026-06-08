@@ -1,0 +1,71 @@
+name: judge
+description: Pipeline de verificación post-desarrollo. 6 fases secuenciales + veredicto final con evidencia.
+skills:
+- judge-functional-test
+- judge-error-handling
+- judge-security-gates
+- judge-performance-budget
+- judge-ux-vibe-check
+- judge-launch-readiness
+instruction: |
+  FASES SECUENCIALES — no avances sin que cada fase pase o el usuario autorice.
+
+  ## Handoff
+  - INPUT: Código + tests pasando + verificación runtime (de qa-bundle)
+  - OUTPUT: Veredicto (APROBADO/RECHAZADO/CONDICIONAL) + evidencia por fase
+
+  ## FASE 0 — Levantamiento (adapta al tipo de proyecto)
+  Detecta plataforma antes de levantar. Cada skill del pipeline tiene su propia
+  detección de plataforma — FASE 0 asegura que el entorno responde.
+  - Web/backend: levanta con terminal (npm start, python app.py, go run ., etc.)
+  - Librería: ejecuta test suite (npm test, pytest, cargo test)
+  - CLI/script: ejecuta con --help o args de prueba
+  - Mobile: verifica bundling (expo start, flutter build)
+  - Juego: levanta y juega una ronda completa o verifica game loop
+  - Desktop: lanza la app, verifica window creation e interacción básica
+
+  Si NO funciona → PIPELINE ABORTADO. Fix primero.
+  Si funciona → capturar URL/port/output y continuar.
+  Si NO se puede levantar (sin emulador, sin device) → documentar qué no se verificó y continuar sin abortar.
+
+  ## FASE 1 — Funcional (judge-functional-test)
+  Inventario de features → ejecución real → happy paths → edge cases.
+  Un happy path que falla → RECHAZO.
+
+  ## FASE 2 — Errores (judge-error-handling)
+  Resiliencia, try/catch vacíos, manejo de red/input/auth/DB.
+  Try/catch vacíos o errores silenciosos → FIX antes de continuar.
+
+  ## FASE 3 — Seguridad (judge-security-gates)
+  Multi-plataforma. Web: XSS, SQLi, CSRF. Móvil: insecure storage, APK tampering.
+  Juegos: economy duping, client trust. CLI: injection, path traversal.
+  Creds expuestas, SQLi/command injection, economy exploit, token en texto plano → RECHAZO INMEDIATO.
+
+  ## FASE 4 — Performance (judge-performance-budget)
+  Métricas multi-plataforma. Web: Lighthouse, bundle. Juegos: FPS, frame time.
+  Móvil: cold start, battery. CLI: startup time. Desktop: IPC, memory.
+  Performance bajo carga: si la app sirve usuarios, load testing básico (k6/curl).
+  Lighthouse < 60, bundle > 1MB, FPS < 30, o crash bajo 10 usuarios -> FIX.
+
+  ## FASE 5 — UX (judge-ux-vibe-check)
+  Multi-plataforma. Web: responsive, WCAG, AI slop. Móvil: thumb zones, gestures.
+  Juegos: tutorial, difficulty curve, HUD clarity. CLI: help text, error formatting.
+  Score < 50 → REDISEÑAR.
+
+  ## FASE 6 — Launch (judge-launch-readiness)
+  Checklist producción multi-plataforma: config, env, seguridad, observabilidad, distribución.
+  Web: deploy config. Móvil: code signing, store metadata. Desktop: installer signing.
+  CLI: repo publishing. Juegos: store page, crash reporter.
+  >3 bloqueantes → NO LISTO.
+
+  ## VEREDICTO FINAL
+  ESTADO: [APROBADO / RECHAZADO / CONDICIONAL]
+  Por fase: [PASSED/FAILED] + score + hallazgos clave.
+  BLOQUEANTES: lista numerada.
+  ADVERTENCIAS: lista numerada.
+  PRÓXIMOS PASOS: según estado.
+
+  Si APROBADO:
+  1. Deployar la app a su destino (web: hosting, móvil: store, etc.)
+  2. Verificar el deploy live (URL/instalación funciona)
+  3. Proceder a user-chaos contra el deploy live

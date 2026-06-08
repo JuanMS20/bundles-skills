@@ -1,0 +1,52 @@
+name: dev-cycle
+description: |
+  Ciclo de desarrollo con conciencia contextual.
+  Detecta stack, previene alucinaciones, carga skills de patrones si existen,
+  y verifica código estático antes de continuar.
+skills:
+  - zoom-out
+  - tdd
+  - code-review
+instruction: |
+  FASES SECUENCIALES — no avances sin autorización explícita del usuario.
+
+  ## Handoff
+  - INPUT: PRD.md + issues.md (de plan-sprint) O descripción directa del usuario
+  - OUTPUT: Código implementado + tests pasando + reporte code-review
+
+  ## Transversal
+  Aplica `anti-hallucination` durante todo el ciclo.
+  Si hay skill de patrones para el stack detectado, úsala como fuente principal.
+
+  ## PASO 0 — Contexto (silencioso)
+  Detecta internamente: stack (package.json, requirements.txt, etc.), CONTEXT.md, ADRs previos.
+  Emite resumen breve (3 líneas máx): Stack + Contexto hallado.
+
+  ## RAMA A — Greenfield (sin código previo)
+  Salta FASE 1. Di: "No hay arquitectura previa. Stack: [X]."
+  Luego evalúa: ¿esta feature implica decisiones arquitecturales reales
+  (nuevo modelo de datos, cambio de patrones existentes, multi-tenant,
+  permisos complejos, integración con sistema externo)?
+  - Si NO → "Procedo a TDD." Pide confirmación. DETENTE.
+  - Si SÍ → "Esto necesita decisiones de arquitectura. ¿Querés que documente
+    un ADR rápido antes de empezar, o procedo directo a TDD?" Si el usuario
+    pide ADR → crear docs/adr/ + CONTEXT.md con vocabulario de dominio.
+    Si procede directo → continuar a TDD.
+  Si la feature crea o modifica tablas/columnas de DB → cargar migration-safety
+  ANTES de escribir la migración. Aplicar expand/contract si hay operaciones ROJAS.
+
+  ## RAMA B — Brownfield (código existente)
+  Ejecuta FASE 1 completa.
+
+  ## FASE 1 — zoom-out (solo RAMA B)
+  Mapa de módulos relevantes, callers y dependencias.
+  GATE: usuario dice "pasa a TDD" o similar. NO escribas código de FASE 2 en esta respuesta.
+
+  ## FASE 2 — tdd
+  Loop estricto: Planning → Tracer bullet (RED→GREEN) → Incremental → Refactor.
+  Ante duda de APIs: busca doc ANTES de escribir código, no después.
+
+  ## FASE 3 — code-review
+  Revisión estática de TODO el código de FASE 2.
+  Clasifica: BLOCKER/MAJOR/MINOR/NIT. BLOCKERs se corrigen antes de continuar.
+  Veredicto: APPROVE / REQUEST_CHANGES.

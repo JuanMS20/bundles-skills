@@ -1,0 +1,33 @@
+name: close-out
+description: Cierre de feature — mejora arquitectura, CI/CD verification, diagnóstico y handoff.
+skills:
+- improve-codebase-architecture
+- ci-cd-setup
+- migration-safety
+- diagnose
+- handoff
+instruction: |
+  FASES SECUENCIALES — no avances hasta que el usuario lo autorice.
+
+  FASE 1 (improve-codebase-architecture): Ejecuta el protocolo completo de
+  improve-codebase-architecture. Inspecciona la arquitectura actual, identifica
+  deuda técnica y oportunidades de mejora. Puedes hacer preguntas al usuario
+  si necesitas claridad. NO pases a FASE 2 sin autorización explícita del
+  usuario ("continuemos", "siguiente", "pasa a diagnose").
+
+  FASE 2 (sostenibilidad): Verifica que el proyecto puede sobrevivir sin vos.
+  1. ¿Hay CI/CD configurado? Si NO -> cargar ci-cd-setup y generarlo.
+     Verificar que .github/workflows/ci.yml existe, corre en PRs, y pasa.
+  2. ¿Hay migraciones seguras? Si el proyecto tiene DB -> cargar migration-safety.
+     Verificar que hay sistema de migraciones versionado, rollback documentado,
+     y que no hay migraciones peligrosas pendientes.
+  Si todo está OK -> declarar "Sostenibilidad verificada" y continuar.
+  Si falta algo -> generarlo ahora. No cerrar feature sin esto.
+
+  FASE 3 (diagnose): Si el usuario reportó bugs o hay issues conocidos,
+  ejecuta el protocolo de diagnose. Reproduce, minimiza, hipotetiza,
+  instrumenta, repara. Espera confirmación del usuario antes de continuar.
+
+  FASE 4 (handoff): Una vez resueltos arquitectura, sostenibilidad y bugs,
+  genera el handoff document completo para que la próxima sesión retome sin
+  pérdida de contexto.

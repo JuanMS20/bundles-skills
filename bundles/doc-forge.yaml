@@ -1,0 +1,34 @@
+name: doc-forge
+description: "Pipeline de documentación profesional — mapea proyectos, escribe manuales en formato libro, y exporta PDFs con buena tipografía. Use when user says 'documentar proyecto', 'crear manual', 'generar PDF', 'manual de usuario', o necesita documentación completa de un sistema."
+skills:
+  - project-mapper
+  - manual-writer
+  - pdf-export
+  - zoom-out
+instruction: |
+  FASES SECUENCIALES — no avances hasta que el usuario lo autorice.
+
+  FASE 0 (clasificacion): Determina qué tipo de documentación necesita el usuario:
+  - Manual de USUARIO FINAL: features, workflows, UI, lenguaje simple.
+  - Manual de PROGRAMADOR: APIs, arquitectura, data models, config, código.
+  - Manual de ADMIN: deploy, config, monitoreo, troubleshooting.
+  Si no está claro, pregunta. Carga la skill `zoom-out` para mapear el proyecto
+  antes de empezar si el código es grande o complejo.
+
+  FASE 1 (project-mapper): Ejecuta el protocolo completo de `project-mapper`.
+  Escanea el proyecto, identifica stack, features, data models, arquitectura.
+  Genera el blueprint YAML en docs/blueprint.yaml.
+  Presenta resumen al usuario: N features, N modelos, N capítulos propuestos.
+  Espera confirmación antes de continuar.
+
+  FASE 2 (manual-writer): Ejecuta el protocolo de `manual-writer` con el
+  modo de audiencia confirmado en FASE 0. Propón capítulos, espera aprobación,
+  luego escribe cada capítulo. Presenta el capítulo más complejo como muestra.
+  Espera feedback del usuario antes de generar todos los capítulos.
+
+  FASE 3 (pdf-export): Ejecuta `pdf-export` para convertir el manual a PDF.
+  Instala dependencias si es necesario (uv pip install weasyprint markdown).
+  Si weasyPrint falla en Windows, genera HTML como fallback y guía al usuario
+  para imprimir desde el navegador.
+  Verifica que el PDF se generó correctamente (tamaño > 0).
+  Reporta: ruta del archivo, tamaño, número de páginas estimado.
