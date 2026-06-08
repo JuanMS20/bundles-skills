@@ -1,0 +1,32 @@
+# Configuración por defecto para PDF Export
+# Copia este archivo como manual-config.yaml en tu directorio de docs/
+# y personaliza los valores.
+
+# === Información del documento ===
+title: "Nombre del Proyecto"
+subtitle: "Manual de Usuario"
+author: "Tu Nombre / Empresa"
+version: "1.0"
+
+# === Tipografía ===
+# Body: 14pt es cómodo para lectura en pantalla y papel
+# Para presentaciones o audiencia mayor: 16pt
+font_size_body: "14pt"
+font_size_h1: "28pt"
+font_size_h2: "20pt"
+font_size_h3: "16pt"
+font_size_h4: "14pt"
+
+# Fuentes: el sistema usa las disponibles. Segoe UI es ideal en Windows.
+font_family: "'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+
+# === Página ===
+page_size: "A4"           # A4, Letter, Legal
+margins: "2.5cm"          # Márgenes generosos para lectura cómoda
+
+# === Colores ===
+accent_color: "#1a1a2e"   # Color principal (headers, tabla headers)
+link_color: "#2563eb"     # Color de enlaces
+
+# === Logo (opcional) ===
+# logo_path: "./assets/logo.png"

@@ -1,0 +1,11 @@
+# Codex CLI - OpenCode Go Configuration
+# Copy to ~/.codex/config.toml and set OPENCODEGO_API_KEY
+
+model = "mimo-v2.5"
+model_provider = "opencodego"
+
+[model_providers.opencodego]
+name = "OpenCode Go"
+base_url = "https://opencode.ai/zen/go/v1"
+env_key = "OPENCODEGO_API_KEY"
+wire_api = "responses"

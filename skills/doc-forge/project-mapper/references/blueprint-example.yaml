@@ -1,0 +1,141 @@
+# Ejemplo de blueprint.yaml
+
+Este es un ejemplo real del formato que `project-mapper` genera.
+
+```yaml
+meta:
+  name: "NOVVA Valle"
+  description: "Aplicación web para gestión de comunidad residencial"
+  version: "1.0.0"
+  generated: "2026-06-06"
+
+stack:
+  language: "TypeScript"
+  framework: "React 19"
+  runtime: "Vite 8"
+  package_manager: "npm"
+  database: "Supabase (PostgreSQL)"
+  deployment: "Cloudflare Pages"
+
+architecture:
+  pattern: "Component-based SPA with serverless backend"
+  layers:
+    - name: "Frontend"
+      path: "src/"
+      responsibility: "UI, routing, state management"
+      key_files:
+        - "src/main.tsx"
+        - "src/App.tsx"
+        - "src/router.tsx"
+    - name: "Components"
+      path: "src/components/"
+      responsibility: "Reusable UI components"
+      key_files:
+        - "src/components/Layout.tsx"
+        - "src/components/DataTable.tsx"
+    - name: "Pages"
+      path: "src/pages/"
+      responsibility: "Route-level views"
+      key_files:
+        - "src/pages/Login.tsx"
+        - "src/pages/Dashboard.tsx"
+        - "src/pages/Admin.tsx"
+    - name: "Services"
+      path: "src/services/"
+      responsibility: "API calls, Supabase client"
+      key_files:
+        - "src/services/supabase.ts"
+        - "src/services/auth.ts"
+    - name: "Edge Functions"
+      path: "supabase/functions/"
+      responsibility: "Server-side logic"
+      key_files:
+        - "supabase/functions/user-admin/index.ts"
+
+features:
+  - name: "Login"
+    description: "Autenticación de usuarios con email/password"
+    entry_point: "src/pages/Login.tsx"
+    type: "page"
+    user_roles: ["all"]
+  - name: "Dashboard"
+    description: "Panel principal con resumen de actividad"
+    entry_point: "src/pages/Dashboard.tsx"
+    type: "page"
+    user_roles: ["authenticated"]
+  - name: "Admin Panel"
+    description: "Gestión de usuarios y configuración"
+    entry_point: "src/pages/Admin.tsx"
+    type: "page"
+    user_roles: ["admin"]
+  - name: "User Management API"
+    description: "CRUD de usuarios via Edge Function"
+    entry_point: "supabase/functions/user-admin/index.ts"
+    type: "endpoint"
+    user_roles: ["admin"]
+
+data_models:
+  - name: "User"
+    table: "users"
+    fields:
+      - name: "id"
+        type: "uuid"
+        description: "ID único del usuario"
+      - name: "email"
+        type: "text"
+        description: "Correo electrónico"
+      - name: "role"
+        type: "text"
+        description: "Rol del usuario (admin, resident, etc.)"
+      - name: "full_name"
+        type: "text"
+        description: "Nombre completo"
+    relationships:
+      - type: "has_many"
+        target: "posts"
+
+config:
+  env_vars:
+    - name: "VITE_SUPABASE_URL"
+      required: true
+      description: "URL del proyecto Supabase"
+    - name: "VITE_SUPABASE_ANON_KEY"
+      required: true
+      description: "Clave anónima de Supabase"
+  config_files:
+    - "vite.config.ts"
+    - "tsconfig.json"
+    - "tailwind.config.ts"
+
+user_flows:
+  - name: "Login"
+    steps:
+      - "Usuario ingresa email y password"
+      - "Sistema valida credenciales contra Supabase Auth"
+      - "Si exitoso: redirige a Dashboard"
+      - "Si falla: muestra error"
+    roles: ["all"]
+  - name: "Admin: Crear usuario"
+    steps:
+      - "Admin abre panel de administración"
+      - "Click en 'Nuevo usuario'"
+      - "Completa formulario (nombre, email, rol)"
+      - "Sistema llama a Edge Function user-admin"
+      - "Usuario creado en DB y email de invitación enviado"
+    roles: ["admin"]
+
+dependencies:
+  key_packages:
+    - name: "react"
+      version: "19.x"
+      purpose: "UI framework"
+    - name: "@supabase/supabase-js"
+      version: "2.x"
+      purpose: "Database and auth client"
+    - name: "react-router"
+      version: "7.x"
+      purpose: "Client-side routing"
+    - name: "tailwindcss"
+      version: "4.x"
+      purpose: "Utility-first CSS"
+```
