@@ -1,55 +1,66 @@
 name: video-studio
 description: |
-  Pipeline de producción de video programático para SaaS.
-  Crea explainer videos, feature announcements, changelogs, y contenido de marketing
-  usando Remotion + React. Desde concepto hasta render final.
-  Use when user says "quiero hacer un video", "promo video", "explainer",
-  "feature announcement video", "video para SaaS", o menciona Remotion.
+  Pipeline de edición profesional de video con Remotion.
+  Crea contenido para YouTube, TikTok, Reels, Shorts, podcasts, tutoriales,
+  entrevistas y motion graphics. Desde concepto hasta render final.
+  Use when user says "quiero hacer un video", "editar video", "contenido para TikTok",
+  "YouTube intro", "subtítulos animados", "transiciones", "lower thirds", o menciona Remotion.
 skills:
   - remotion-video
-  - frontend-design
+  - grill-with-docs
   - zoom-out
   - qa-testing
 instruction: |
   FASES SECUENCIALES — no avances sin autorización del usuario.
 
   ## Handoff
-  - INPUT: Concepto de video (tipo, mensaje, audiencia) o assets existentes (screen recordings, logos, copy)
-  - OUTPUT: Video renderizado + archivos fuente versionados en Git
+  - INPUT: Idea de video, script, clips grabados, audio, o referencia de estilo
+  - OUTPUT: Video renderizado + proyecto fuente versionado en Git
 
   ## Transversal
-  - Aplica `frontend-design` cuando el video requiera estética (colores, tipografía, layout)
-  - Aplica `zoom-out` para evaluar si el concepto está completo antes de animar
+  - Aplica `grill-with-docs` en FASE 0 para definir concepto, audiencia, estilo y formato
+  - Aplica `zoom-out` para validar que el concepto está completo antes de animar
+  - Aplica `qa-testing` en FASE 5 para verificar legibilidad, sync de audio, y specs por plataforma
 
-  ## FASE 0 — Concepto y Script
-  Antes de tocar código:
+  ## FASE 0 — Concepto y Pre-Producción
+  Antes de tocar código, definir con el usuario:
 
-  1. Determinar tipo de video según objetivo:
-     | Objetivo | Tipo | Duración típica |
-     |---|---|---|
-     | Explicar producto completo | Explainer | 60-90s |
-     | Anunciar una feature | Feature Announcement | 15-30s |
-     | Comunicar update | Changelog | 10-20s |
-     | Mostrar testimonio | Social Proof | 15-30s |
-     | Contenido social rápido | Short/Reel | 15-60s |
+  1. **Carga `grill-with-docs`**. Interroga al usuario sobre:
+     - ¿Qué tipo de contenido? (vlog, tutorial, entrevista, podcast, promo, meme, motion graphics)
+     - ¿Para qué plataforma? (YouTube, TikTok, Reels, Shorts, LinkedIn, Twitter/X)
+     - ¿Quién es la audiencia? (edad, idioma, nivel de conocimiento previo)
+     - ¿Qué emoción/style busca? (divertido, profesional, minimalista, hype, calm)
+     - ¿Qué assets tiene? (clips, audio, música, fotos, logo, transcripción)
+     - ¿Qué duración aproximada?
 
-  2. Escribir script/frame-by-frame storyboard en texto plano:
+  2. Determinar specs técnicos según plataforma:
+     | Plataforma | Resolución | FPS | Ratio |
+     |---|---|---|---|
+     | YouTube landscape | 1920x1080 | 30/60 | 16:9 |
+     | YouTube Shorts | 1080x1920 | 30/60 | 9:16 |
+     | TikTok | 1080x1920 | 30 | 9:16 |
+     | Reels / Stories | 1080x1920 | 30 | 9:16 |
+     | Instagram Feed | 1080x1080 | 30 | 1:1 |
+     | Twitter/X | 1280x720 | 30 | 16:9 |
+     | LinkedIn | 1920x1080 | 30 | 16:9 |
+
+  3. Crear storyboard frame-by-frame en texto:
      ```
-     0-3s: Logo reveal + tagline
-     3-15s: Problem statement
-     15-35s: Solution walkthrough
+     0-3s   → [elemento] + [animación] + [audio]
+     3-8s   → [elemento] + [animación] + [audio]
+     8-15s  → [elemento] + [transición] + [audio]
      ...
      ```
 
-  3. Listar assets necesarios:
-     - Screen recordings (qué flujos mostrar)
-     - Logo / branding (formato PNG/SVG)
-     - Copy / textos (headlines, CTAs)
-     - Audio (voiceover, música de fondo)
+  4. Inventario de assets:
+     - Video clips (qué clips, trim in/out)
+     - Audio (voiceover, música, SFX)
+     - Imágenes (fotos, logos, gráficos)
+     - Subtítulos/captions (SRT existente o transcripción necesaria)
 
-  Presenta concepto completo. ESPERA aprobación del usuario antes de FASE 1.
+  Presenta concepto completo. **ESPERA aprobación del usuario antes de FASE 1.**
 
-  ## FASE 1 — Setup y Arquitectura
+  ## FASE 1 — Setup de Proyecto
   Carga `remotion-video`.
 
   1. Scaffold proyecto:
@@ -57,102 +68,129 @@ instruction: |
      npx create-video@latest --yes --blank --no-tailwind [nombre-proyecto]
      ```
 
-  2. Configurar composition en `src/Root.tsx`:
-     - Resolution: 1920x1080 (landscape) o 1080x1920 (vertical shorts)
-     - FPS: 30 (estándar) o 60 (motion suave)
-     - DurationInFrames: según script
+  2. Configurar composition en `src/Root.tsx` con specs definidos en FASE 0.
 
   3. Organizar assets en `public/`:
      ```
      public/
+     ├── clips/
+     │   ├── a-roll/
+     │   └── b-roll/
+     ├── audio/
+     │   ├── voiceover.mp3
+     │   ├── music.mp3
+     │   └── sfx/
      ├── images/
      │   ├── logo.png
-     │   └── icons/
-     ├── recordings/
-     │   └── demo.mp4
-     └── audio/
-         ├── voiceover.mp3
-         └── bgm.mp3
+     │   └── photos/
+     └── subtitles/
+         └── captions.srt
      ```
 
   4. Crear estructura de componentes:
      ```
      src/
      ├── scenes/
-     │   ├── IntroScene.tsx
-     │   ├── DemoScene.tsx
-     │   ├── FeatureScene.tsx
-     │   └── CTAScene.tsx
+     │   ├── Intro.tsx
+     │   ├── MainContent.tsx
+     │   └── Outro.tsx
      ├── components/
-     │   ├── FadeIn.tsx
-     │   ├── SlideUp.tsx
-     │   └── TextReveal.tsx
+     │   ├── transitions/
+     │   ├── subtitles/
+     │   ├── lower-thirds/
+     │   └── effects/
      ├── compositions/
      │   └── MainComposition.tsx
      ├── Root.tsx
      └── index.ts
      ```
 
-  ## FASE 2 — Animación y Composición
-  Construir cada scene siguiendo el storyboard:
+  ## FASE 2 — Edición y Composición
+  Construir timeline según storyboard:
 
-  - **Entrances**: `interpolate` + `Easing.bezier(0.16, 1, 0.3, 1)` — crisp ease-out
-  - **Text reveals**: Frame-by-frame opacity + translateY, nunca CSS transitions
-  - **Screen recordings**: `<Video>` con trim (`startFrom`, `endAt`)
-  - **Callouts**: SVG overlays animados sobre recordings (circles, arrows, text boxes)
-  - **Transitions**: `@remotion/transitions` (fade, slide) entre scenes
+  - **A-roll**: Secuencia principal (entrevista, vlog, tutorial) con `<Video>`
+  - **B-roll**: Overlays de clips secundarios en `<Sequence>` superpuestos
+  - **Transiciones**: `@remotion/transitions` — fade, slide, wipe entre escenas
+  - **Lower thirds**: Nombres, títulos, datos — entradas suaves con `interpolate`
+  - **Subtítulos**: `<Sequence>` por cue, estilo según plataforma
+  - **Color grading**: Overlays CSS (vignette, warm/cool tint, contrast)
 
-  **Restricciones visuales SaaS:**
-  - Max 3 colores (brand + blanco + oscuro)
-  - Padding mínimo 60px
-  - Texto mínimo 32px (body), 48px (headlines)
-  - Motion sutil > flashy (SaaS = confianza)
+  **Timing principles:**
+  - Entradas: 0.5-1.5s (15-45 frames @ 30fps)
+  - Transiciones: 0.4-0.8s (12-25 frames)
+  - Lower thirds hold: mínimo 2s
+  - Ritmo TikTok: cortes cada 1-2s
+  - Ritmo YouTube tutorial: cortes cada 3-5s
 
-  ## FASE 3 — Audio y Timing
-  1. Sincronizar voiceover con visual cues:
-     - Marcar timestamps del voiceover
-     - Alinear entrances de text/callouts con esos timestamps
-  2. Background music: `<Audio>` con `volume={0.15-0.25}` (no compita con voiceover)
-  3. Sound effects: cortos, en transiciones, volumen bajo
+  ## FASE 3 — Audio y Sync
+  1. Layer audio: voiceover + música + SFX
+  2. Música de fondo: `<Audio volume={0.15-0.25}>` (no compita con voz)
+  3. SFX en transiciones: cortos, volumen bajo
+  4. Si hay subtítulos: sincronizar con voiceover frame-by-frame
 
-  ## FASE 4 — Preview y QA
-  1. Render still frames en checkpoints (1s, 5s, 10s, mitad, final)
+  ## FASE 4 — Review y Ajustes
+  1. Render still frames en checkpoints:
      ```bash
-     npx remotion still MainComposition --frame=30 --scale=0.5
+     npx remotion still MainComp --frame=30 --scale=0.5
+     npx remotion still MainComp --frame=150 --scale=0.5
      ```
-  2. Preview completo en studio:
+  2. Preview completo:
      ```bash
      npx remotion studio
      ```
-  3. Cargar `qa-testing` para verificar:
-     - Todos los textos son legibles
-     - Transiciones no cortan contenido importante
-     - Audio no tiene clipping
-     - Colores consistentes con brand
-     - CTA es visible y legible
+  3. Checklist de revisión:
+     - [ ] Textos legibles a tamaño móvil (preview 50% scale)
+     - [ ] Subtítulos no tapen elementos clave
+     - [ ] Transiciones no cortan palabras a mitad
+     - [ ] Audio sin clipping ni picos
+     - [ ] Colores consistentes entre clips
+     - [ ] Lower thirds no overlap entre sí
 
-  ## FASE 5 — Render y Entrega
-  1. Render final local:
+  ## FASE 5 — QA y Render
+  Carga `qa-testing`.
+
+  1. Verificar specs por plataforma:
+     - Duración dentro de límites (YouTube Shorts: max 60s, TikTok: 10min)
+     - Ratio correcto
+     - FPS correcto
+     - Tamaño de archivo estimado
+
+  2. Render final:
      ```bash
-     npx remotion render MainComposition out/final.mp4
+     npx remotion render MainComp out/final.mp4
      ```
-  2. Opcional: Cloud render (AWS Lambda) si se necesita batch/escala
+
+  3. Variantes (si se necesitan):
      ```bash
-     npx remotion lambda render <site-id> MainComposition out/final.mp4
+     # Landscape para YouTube
+     npx remotion render MainComp out/youtube.mp4 --props='{"format":"landscape"}'
+     # Vertical para Shorts/Reels
+     npx remotion render MainComp out/shorts.mp4 --props='{"format":"vertical"}'
      ```
-  3. Entregar:
-     - Video MP4 (H.264)
-     - Proyecto fuente en Git (por si necesita ajustes futuros)
+
+  4. Cloud render (opcional):
+     ```bash
+     npx remotion lambda render <site-id> MainComp out/final.mp4
+     ```
+
+  5. Entregar:
+     - Video MP4 (H.264, profile High, level 4.2)
+     - Proyecto fuente en Git
      - Storyboard/script usado
+     - Lista de assets y licencias
 
   ## Output Format
 
   ```
-  Tipo: [Explainer | Feature | Changelog | Short]
-  Duración: [X]s ([Y] frames @ [Z]fps)
+  Proyecto: [nombre]
+  Tipo: [vlog | tutorial | entrevista | podcast | promo | motion graphics | meme]
+  Plataforma: [YouTube | TikTok | Reels | Shorts | LinkedIn | Twitter/X]
   Resolución: [WxH]
+  FPS: [30 | 60]
+  Duración: [X]s ([Y] frames)
   Escenas: [lista]
-  Assets usados: [lista]
+  Assets: [lista]
+  Subtítulos: [SRT generado | manual | ninguno]
   Render: [local | lambda]
   Veredicto QA: [PASS/FAIL por item]
   ```

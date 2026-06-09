@@ -52,7 +52,7 @@ Cada bundle carga múltiples skills en orden y orquesta fases secuenciales con g
 | **close-out** | `improve-codebase-architecture` → `ci-cd-setup` → `migration-safety` → `handoff` | Cierre de feature: arquitectura → CI/CD → migraciones → handoff |
 | **doc-forge** | `project-mapper` → `manual-writer` → `pdf-export` | Documentación: mapear → escribir manual → exportar PDF |
 | **skill-forge** | `write-a-skill` → `write-stack-skill` | Creación y auditoría de skills |
-| **video-studio** | `remotion-video` → `frontend-design` → `zoom-out` → `qa-testing` | Producción de video programático para SaaS: concepto → setup → animación → QA → render |
+| **video-studio** | `remotion-video` → `grill-with-docs` → `zoom-out` → `qa-testing` | Edición profesional de video: vlogs, tutoriales, TikTok, YouTube, podcasts, entrevistas, motion graphics. Desde concepto hasta render |
 
 ### Flujo de desarrollo completo
 
@@ -74,7 +74,7 @@ No todos los proyectos necesitan todos los bundles. Las fases se adaptan al tipo
 | **Refactor interno** | zoom-out → dev-cycle → qa-bundle → close-out | Skip judge si no cambia API externa |
 | **Security audit puntual** | judge (solo FASE 3) | Independiente |
 | **Documentación sola** | doc-forge | Independiente |
-| **Video promocional SaaS** | video-studio | Independiente o después de dev-cycle (si el video muestra features existentes) |
+| **Video promocional / contenido** | video-studio | Independiente. Usa grill-with-docs para definir concepto, audiencia, plataforma y estilo antes de editar |
 
 ---
 
@@ -112,7 +112,7 @@ Las 29 skills en `skills/` son las únicas referenciadas por los 9 bundles. Est�
 
 ### Diseño
 - `frontend-design` — Workflow anti-AI-slop de 8 fases para UI estética
-- `remotion-video` — Video programático con Remotion: setup, animación, media, render
+- `remotion-video` — Edición profesional de video con Remotion: formatos por plataforma, transiciones, subtítulos animados, lower thirds, color grading, audio sync
 
 ### DevOps
 - `ci-cd-setup` — Pipelines de CI/CD con GitHub Actions
