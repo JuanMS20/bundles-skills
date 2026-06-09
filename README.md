@@ -10,7 +10,7 @@ Diseñado para [Hermes Agent](https://hermes-agent.nousresearch.com) por Nous Re
 
 ```
 .
-├── bundles/              # 8 YAMLs — pipelines multi-skill secuenciales
+├── bundles/              # 9 YAMLs — pipelines multi-skill secuenciales
 │   ├── plan-sprint.yaml
 │   ├── dev-cycle.yaml
 │   ├── qa-bundle.yaml
@@ -18,10 +18,12 @@ Diseñado para [Hermes Agent](https://hermes-agent.nousresearch.com) por Nous Re
 │   ├── user-chaos.yaml
 │   ├── close-out.yaml
 │   ├── doc-forge.yaml
-│   └── skill-forge.yaml
+│   ├── skill-forge.yaml
+│   └── video-studio.yaml
 ├── skills/               # 28 skills — las que usan los bundles
 │   ├── code-review/
 │   ├── creative/frontend-design/
+│   ├── creative/remotion-video/
 │   ├── devops/ci-cd-setup/
 │   ├── devops/migration-safety/
 │   ├── doc-forge/
@@ -50,6 +52,7 @@ Cada bundle carga múltiples skills en orden y orquesta fases secuenciales con g
 | **close-out** | `improve-codebase-architecture` → `ci-cd-setup` → `migration-safety` → `handoff` | Cierre de feature: arquitectura → CI/CD → migraciones → handoff |
 | **doc-forge** | `project-mapper` → `manual-writer` → `pdf-export` | Documentación: mapear → escribir manual → exportar PDF |
 | **skill-forge** | `write-a-skill` → `write-stack-skill` | Creación y auditoría de skills |
+| **video-studio** | `remotion-video` → `frontend-design` → `zoom-out` → `qa-testing` | Producción de video programático para SaaS: concepto → setup → animación → QA → render |
 
 ### Flujo de desarrollo completo
 
@@ -71,12 +74,13 @@ No todos los proyectos necesitan todos los bundles. Las fases se adaptan al tipo
 | **Refactor interno** | zoom-out → dev-cycle → qa-bundle → close-out | Skip judge si no cambia API externa |
 | **Security audit puntual** | judge (solo FASE 3) | Independiente |
 | **Documentación sola** | doc-forge | Independiente |
+| **Video promocional SaaS** | video-studio | Independiente o después de dev-cycle (si el video muestra features existentes) |
 
 ---
 
 ## Skills
 
-Las 28 skills en `skills/` son las únicas referenciadas por los 8 bundles. Están organizadas por dominio:
+Las 29 skills en `skills/` son las únicas referenciadas por los 9 bundles. Están organizadas por dominio:
 
 ### Matt Pocock (flujo de ingeniería)
 - `grill-with-docs` — Stress-test de ideas contra documentación
@@ -108,6 +112,7 @@ Las 28 skills en `skills/` son las únicas referenciadas por los 8 bundles. Est�
 
 ### Diseño
 - `frontend-design` — Workflow anti-AI-slop de 8 fases para UI estética
+- `remotion-video` — Video programático con Remotion: setup, animación, media, render
 
 ### DevOps
 - `ci-cd-setup` — Pipelines de CI/CD con GitHub Actions

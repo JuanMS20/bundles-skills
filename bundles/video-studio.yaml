@@ -1,0 +1,158 @@
+name: video-studio
+description: |
+  Pipeline de producción de video programático para SaaS.
+  Crea explainer videos, feature announcements, changelogs, y contenido de marketing
+  usando Remotion + React. Desde concepto hasta render final.
+  Use when user says "quiero hacer un video", "promo video", "explainer",
+  "feature announcement video", "video para SaaS", o menciona Remotion.
+skills:
+  - remotion-video
+  - frontend-design
+  - zoom-out
+  - qa-testing
+instruction: |
+  FASES SECUENCIALES — no avances sin autorización del usuario.
+
+  ## Handoff
+  - INPUT: Concepto de video (tipo, mensaje, audiencia) o assets existentes (screen recordings, logos, copy)
+  - OUTPUT: Video renderizado + archivos fuente versionados en Git
+
+  ## Transversal
+  - Aplica `frontend-design` cuando el video requiera estética (colores, tipografía, layout)
+  - Aplica `zoom-out` para evaluar si el concepto está completo antes de animar
+
+  ## FASE 0 — Concepto y Script
+  Antes de tocar código:
+
+  1. Determinar tipo de video según objetivo:
+     | Objetivo | Tipo | Duración típica |
+     |---|---|---|
+     | Explicar producto completo | Explainer | 60-90s |
+     | Anunciar una feature | Feature Announcement | 15-30s |
+     | Comunicar update | Changelog | 10-20s |
+     | Mostrar testimonio | Social Proof | 15-30s |
+     | Contenido social rápido | Short/Reel | 15-60s |
+
+  2. Escribir script/frame-by-frame storyboard en texto plano:
+     ```
+     0-3s: Logo reveal + tagline
+     3-15s: Problem statement
+     15-35s: Solution walkthrough
+     ...
+     ```
+
+  3. Listar assets necesarios:
+     - Screen recordings (qué flujos mostrar)
+     - Logo / branding (formato PNG/SVG)
+     - Copy / textos (headlines, CTAs)
+     - Audio (voiceover, música de fondo)
+
+  Presenta concepto completo. ESPERA aprobación del usuario antes de FASE 1.
+
+  ## FASE 1 — Setup y Arquitectura
+  Carga `remotion-video`.
+
+  1. Scaffold proyecto:
+     ```bash
+     npx create-video@latest --yes --blank --no-tailwind [nombre-proyecto]
+     ```
+
+  2. Configurar composition en `src/Root.tsx`:
+     - Resolution: 1920x1080 (landscape) o 1080x1920 (vertical shorts)
+     - FPS: 30 (estándar) o 60 (motion suave)
+     - DurationInFrames: según script
+
+  3. Organizar assets en `public/`:
+     ```
+     public/
+     ├── images/
+     │   ├── logo.png
+     │   └── icons/
+     ├── recordings/
+     │   └── demo.mp4
+     └── audio/
+         ├── voiceover.mp3
+         └── bgm.mp3
+     ```
+
+  4. Crear estructura de componentes:
+     ```
+     src/
+     ├── scenes/
+     │   ├── IntroScene.tsx
+     │   ├── DemoScene.tsx
+     │   ├── FeatureScene.tsx
+     │   └── CTAScene.tsx
+     ├── components/
+     │   ├── FadeIn.tsx
+     │   ├── SlideUp.tsx
+     │   └── TextReveal.tsx
+     ├── compositions/
+     │   └── MainComposition.tsx
+     ├── Root.tsx
+     └── index.ts
+     ```
+
+  ## FASE 2 — Animación y Composición
+  Construir cada scene siguiendo el storyboard:
+
+  - **Entrances**: `interpolate` + `Easing.bezier(0.16, 1, 0.3, 1)` — crisp ease-out
+  - **Text reveals**: Frame-by-frame opacity + translateY, nunca CSS transitions
+  - **Screen recordings**: `<Video>` con trim (`startFrom`, `endAt`)
+  - **Callouts**: SVG overlays animados sobre recordings (circles, arrows, text boxes)
+  - **Transitions**: `@remotion/transitions` (fade, slide) entre scenes
+
+  **Restricciones visuales SaaS:**
+  - Max 3 colores (brand + blanco + oscuro)
+  - Padding mínimo 60px
+  - Texto mínimo 32px (body), 48px (headlines)
+  - Motion sutil > flashy (SaaS = confianza)
+
+  ## FASE 3 — Audio y Timing
+  1. Sincronizar voiceover con visual cues:
+     - Marcar timestamps del voiceover
+     - Alinear entrances de text/callouts con esos timestamps
+  2. Background music: `<Audio>` con `volume={0.15-0.25}` (no compita con voiceover)
+  3. Sound effects: cortos, en transiciones, volumen bajo
+
+  ## FASE 4 — Preview y QA
+  1. Render still frames en checkpoints (1s, 5s, 10s, mitad, final)
+     ```bash
+     npx remotion still MainComposition --frame=30 --scale=0.5
+     ```
+  2. Preview completo en studio:
+     ```bash
+     npx remotion studio
+     ```
+  3. Cargar `qa-testing` para verificar:
+     - Todos los textos son legibles
+     - Transiciones no cortan contenido importante
+     - Audio no tiene clipping
+     - Colores consistentes con brand
+     - CTA es visible y legible
+
+  ## FASE 5 — Render y Entrega
+  1. Render final local:
+     ```bash
+     npx remotion render MainComposition out/final.mp4
+     ```
+  2. Opcional: Cloud render (AWS Lambda) si se necesita batch/escala
+     ```bash
+     npx remotion lambda render <site-id> MainComposition out/final.mp4
+     ```
+  3. Entregar:
+     - Video MP4 (H.264)
+     - Proyecto fuente en Git (por si necesita ajustes futuros)
+     - Storyboard/script usado
+
+  ## Output Format
+
+  ```
+  Tipo: [Explainer | Feature | Changelog | Short]
+  Duración: [X]s ([Y] frames @ [Z]fps)
+  Resolución: [WxH]
+  Escenas: [lista]
+  Assets usados: [lista]
+  Render: [local | lambda]
+  Veredicto QA: [PASS/FAIL por item]
+  ```
