@@ -4,6 +4,7 @@ description: |
   verificación runtime obligatoria. Detecta si ya pasó por dev-cycle.
 skills:
   - qa-testing
+  - e2e-testing
   - anti-hallucination
   - zoom-out
   - tdd
@@ -30,6 +31,12 @@ instruction: |
 
   ## FASE 1 — Testing
   Carga `qa-testing`. Ejecuta 4 capas: smoke → functional → integration → security quick check.
+  
+  Si el proyecto es web/desktop y tiene infra E2E (Playwright, Cypress, Selenium) o el usuario
+  pide tests end-to-end: carga `e2e-testing` como capa adicional. Cubre: auth, onboarding,
+  core loop, pagos, admin. Máximo 5-10 flujos críticos. NO escribir E2E para validación de campo
+  (unit) ni cálculos (unit).
+  
   Cada bug → TODO item con: severidad (CRITICAL/HIGH/MEDIUM/LOW), repro steps, expected vs actual, archivo.
   Presenta lista completa. ESPERA aprobación del plan de fixes.
 
