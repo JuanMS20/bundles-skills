@@ -52,7 +52,7 @@ Cada bundle carga múltiples skills en orden y orquesta fases secuenciales con g
 | **close-out** | `improve-codebase-architecture` → `ci-cd-setup` → `migration-safety` → `handoff` | Cierre de feature: arquitectura → CI/CD → migraciones → handoff |
 | **doc-forge** | `project-mapper` → `manual-writer` → `pdf-export` | Documentación: mapear → escribir manual → exportar PDF |
 | **skill-forge** | `write-a-skill` → `write-stack-skill` | Creación y auditoría de skills |
-| **video-studio** | `remotion-video` → `grill-with-docs` → `zoom-out` → `qa-testing` | Edición profesional de video: vlogs, tutoriales, TikTok, YouTube, podcasts, entrevistas, motion graphics. Desde concepto hasta render |
+| **video-studio** | `remotion-video` → `frontend-design` → `grill-with-docs` → `zoom-out` → `qa-testing` | Edición profesional de video: vlogs, tutoriales, TikTok, YouTube, podcasts, entrevistas, motion graphics. Desde concepto hasta render |
 
 ### Flujo de desarrollo completo
 

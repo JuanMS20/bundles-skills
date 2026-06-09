@@ -7,6 +7,7 @@ description: |
   "YouTube intro", "subtítulos animados", "transiciones", "lower thirds", o menciona Remotion.
 skills:
   - remotion-video
+  - frontend-design
   - grill-with-docs
   - zoom-out
   - qa-testing
@@ -19,6 +20,7 @@ instruction: |
 
   ## Transversal
   - Aplica `grill-with-docs` en FASE 0 para definir concepto, audiencia, estilo y formato
+  - Aplica `frontend-design` en FASE 2 para definir paleta de colores, tipografía, espaciado y coherencia visual del video
   - Aplica `zoom-out` para validar que el concepto está completo antes de animar
   - Aplica `qa-testing` en FASE 5 para verificar legibilidad, sync de audio, y specs por plataforma
 
@@ -108,6 +110,14 @@ instruction: |
   ## FASE 2 — Edición y Composición
   Construir timeline según storyboard:
 
+  1. **Carga `frontend-design`** para definir el sistema visual del video:
+     - Paleta de colores (máximo 3-4 colores: primario + neutros + acento)
+     - Tipografía (sans-serif bold para títulos, legible en mobile)
+     - Jerarquía de tamaños (headline > body > caption)
+     - Espaciado consistente (padding seguro 60px, gap entre elementos)
+     - Regla: si se ve genérico o "template de AI", rehacer
+
+  2. Construir layers del timeline:
   - **A-roll**: Secuencia principal (entrevista, vlog, tutorial) con `<Video>`
   - **B-roll**: Overlays de clips secundarios en `<Sequence>` superpuestos
   - **Transiciones**: `@remotion/transitions` — fade, slide, wipe entre escenas
