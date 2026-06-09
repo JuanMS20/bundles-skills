@@ -122,8 +122,12 @@ instruction: |
   - **B-roll**: Overlays de clips secundarios en `<Sequence>` superpuestos
   - **Transiciones**: `@remotion/transitions` — fade, slide, wipe entre escenas
   - **Lower thirds**: Nombres, títulos, datos — entradas suaves con `interpolate`
-  - **Subtítulos**: `<Sequence>` por cue, estilo según plataforma
+  - **Subtítulos**: 
+    - Estilo YouTube: `<Sequence>` por cue, fondo semitransparente
+    - **Estilo TikTok**: `@remotion/captions` → `parseSrt()` + `createTikTokStyleCaptions()` → word-by-word highlight con `spring()` bounce
+    - Karaoke: palabra resaltada progresivamente según timing exacto
   - **Color grading**: Overlays CSS (vignette, warm/cool tint, contrast)
+  - **Premounting**: `<Sequence premountFor={30}>` para escenas que carguen assets pesados (videos, Lottie)
 
   **Timing principles:**
   - Entradas: 0.5-1.5s (15-45 frames @ 30fps)
@@ -137,6 +141,12 @@ instruction: |
   2. Música de fondo: `<Audio volume={0.15-0.25}>` (no compita con voz)
   3. SFX en transiciones: cortos, volumen bajo
   4. Si hay subtítulos: sincronizar con voiceover frame-by-frame
+  5. **Si es podcast/audiogram**: Agregar `Waveform` visualizer con `@remotion/media-utils`:
+     ```tsx
+     import { useAudioData, visualizeAudio } from "@remotion/media-utils";
+     // 64 frequency bars sincronizadas con audio
+     ```
+  6. **Whisper auto-caption** (opcional): `npm run sub` en template TikTok para generar SRT automático
 
   ## FASE 4 — Review y Ajustes
   1. Render still frames en checkpoints:
@@ -170,7 +180,12 @@ instruction: |
      npx remotion render MainComp out/final.mp4
      ```
 
-  3. Variantes (si se necesitan):
+  3. Render thumbnail (`<Still>`):
+     ```bash
+     npx remotion still Thumbnail out/thumbnail.png --frame=[peak-frame]
+     ```
+
+  4. Variantes (si se necesitan):
      ```bash
      # Landscape para YouTube
      npx remotion render MainComp out/youtube.mp4 --props='{"format":"landscape"}'
@@ -178,16 +193,18 @@ instruction: |
      npx remotion render MainComp out/shorts.mp4 --props='{"format":"vertical"}'
      ```
 
-  4. Cloud render (opcional):
+  5. Cloud render (opcional):
      ```bash
      npx remotion lambda render <site-id> MainComp out/final.mp4
      ```
 
-  5. Entregar:
+  6. Entregar:
      - Video MP4 (H.264, profile High, level 4.2)
+     - Thumbnail PNG (1280x720)
      - Proyecto fuente en Git
      - Storyboard/script usado
      - Lista de assets y licencias
+     - `calculateMetadata` logs (si se usó dynamic metadata)
 
   ## Output Format
 

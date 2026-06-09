@@ -199,10 +199,10 @@ import { wipe } from "@remotion/transitions/wipe";
 
 ## Subtítulos / Captions Animados
 
-Subtítulos programáticos sincronizados con audio. No dependen de tool externa.
+### Estilo YouTube / Standard
 
 ```tsx
-import { useCurrentFrame, useVideoConfig, Sequence } from "remotion";
+import { useCurrentFrame, Sequence } from "remotion";
 
 const subtitles = [
   { text: "Hola a todos", start: 0, end: 60 },
@@ -210,54 +210,115 @@ const subtitles = [
   { text: "cómo editar videos", start: 150, end: 240 },
 ];
 
-export const Subtitulos = () => {
-  return (
-    <>
-      {subtitles.map((sub, i) => (
-        <Sequence key={i} from={sub.start} durationInFrames={sub.end - sub.start}>
-          <SubtituloLine text={sub.text} />
-        </Sequence>
-      ))}
-    </>
-  );
-};
+export const Subtitulos = () => (
+  <>
+    {subtitles.map((sub, i) => (
+      <Sequence key={i} from={sub.start} durationInFrames={sub.end - sub.start}>
+        <SubtituloLine text={sub.text} />
+      </Sequence>
+    ))}
+  </>
+);
 
 const SubtituloLine = ({ text }: { text: string }) => {
   const frame = useCurrentFrame();
   const opacity = interpolate(frame, [0, 8], [0, 1], { extrapolateRight: "clamp" });
-  const scale = interpolate(frame, [0, 10], [0.95, 1], { extrapolateRight: "clamp" });
-
   return (
     <div style={{
-      position: "absolute",
-      bottom: 80,
-      left: 0,
-      right: 0,
-      textAlign: "center",
-      opacity,
-      transform: `scale(${scale})`,
+      position: "absolute", bottom: 80, left: 0, right: 0,
+      textAlign: "center", opacity,
     }}>
       <span style={{
-        background: "rgba(0,0,0,0.7)",
-        color: "#fff",
-        padding: "12px 24px",
-        borderRadius: 8,
-        fontSize: 48,
-        fontFamily: "sans-serif",
-        fontWeight: 700,
-        textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
-      }}>
-        {text}
-      </span>
+        background: "rgba(0,0,0,0.7)", color: "#fff",
+        padding: "12px 24px", borderRadius: 8, fontSize: 48, fontWeight: 700,
+      }}>{text}</span>
     </div>
   );
 };
 ```
 
-**Estilos de caption populares:**
-- **YouTube standard**: Fondo negro semitransparente, texto blanco, bottom-center
-- **TikTok style**: Texto grande (60px), color primario vibrante, con animación pop-in
-- **Karaoke**: Palabra resaltada progresivamente según timing exacto
+### TikTok Style — Word-by-Word Highlight (Bounce + Color)
+
+```bash
+npx remotion add @remotion/captions
+```
+
+```tsx
+import { useCurrentFrame } from "remotion";
+import { parseSrt, createTikTokStyleCaptions, Caption } from "@remotion/captions";
+
+export const TikTokCaptions = () => {
+  const frame = useCurrentFrame();
+
+  // Parse SRT file → array of Caption objects
+  const captions = parseSrt(srtContent);  // srtContent: string from file
+
+  // Group into "pages" that display together
+  const pages = createTikTokStyleCaptions({
+    captions,
+    combineTokensWithinMilliseconds: 300,  // words closer than 300ms = same page
+  });
+
+  // Find current page based on frame
+  const currentPage = pages.find(
+    (p) => frame >= p.startInFrames && frame < p.endInFrames
+  );
+  if (!currentPage) return null;
+
+  // Find current word index for highlight
+  const currentWordIndex = currentPage.tokens.findIndex(
+    (word) => frame >= word.startInFrames && frame < word.endInFrames
+  );
+
+  return (
+    <div style={{
+      position: "absolute",
+      bottom: 150, left: 0, right: 0,
+      textAlign: "center",
+      fontSize: 60, fontWeight: 900,
+      fontFamily: "sans-serif",
+      textTransform: "uppercase",
+      lineHeight: 1.3,
+    }}>
+      {currentPage.tokens.map((word, i) => (
+        <span key={i} style={{
+          color: i <= currentWordIndex ? "#ff0055" : "#fff",
+          textShadow: "3px 3px 0 #000",
+          display: "inline-block",
+          marginRight: 12,
+          transform: i === currentWordIndex
+            ? `scale(${spring({ frame, fps: 30, config: { damping: 8 } })})`
+            : "scale(1)",
+        }}>
+          {word.text}
+        </span>
+      ))}
+    </div>
+  );
+};
+```
+
+**Key props:**
+- `combineTokensWithinMilliseconds`: menor = más páginas, word-by-word; mayor = frases completas
+- `white-space: pre` en el contenedor para preservar espacios del SRT
+
+### Whisper.cpp Auto-Caption (Local)
+
+```bash
+# En template oficial de Remotion TikTok
+npm run sub   # transcribe videos en public/ con Whisper.cpp
+```
+
+Genera `subtitles.srt` automáticamente. Luego parsear con `parseSrt()` como arriba.
+
+### Estilos por plataforma
+
+| Estilo | Fuente | Color highlight | Tamaño |
+|---|---|---|---|
+| YouTube | Sans-serif 500 | Blanco sobre fondo negro semitransparente | 36-48px |
+| TikTok | Sans-serif 900 uppercase | Color primario vibrante (#ff0055, #00ff88) | 60-72px |
+| Instagram Reels | Sans-serif 700 | Blanco con text-stroke negro | 48-60px |
+| Podcast | Sans-serif 500 | Amarillo (#ffd700) | 32-40px |
 
 ---
 
@@ -318,6 +379,181 @@ export const ColorGrade = ({ children }: { children: React.ReactNode }) => (
 
 ---
 
+## Audio Waveform Visualizer (Audiograms)
+
+Para podcasts, audio clips, o cualquier video que necesite visualización de audio.
+
+```bash
+npx remotion add @remotion/media-utils
+```
+
+```tsx
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { useAudioData, visualizeAudio } from "@remotion/media-utils";
+
+export const Waveform = ({ audioSrc }: { audioSrc: string }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  const audioData = useAudioData(audioSrc);
+  if (!audioData) return null;
+
+  // Generate 64 frequency bars from audio data
+  const visualization = visualizeAudio({
+    audioData,
+    frame,
+    fps,
+    numberOfSamples: 64,
+    audioStartTime: 0,
+  });
+
+  // Map to bar heights (0-200px)
+  const bars = visualization.map((v) => v * 200);
+
+  return (
+    <div style={{
+      position: "absolute",
+      bottom: 100,
+      left: 0,
+      right: 0,
+      display: "flex",
+      alignItems: "flex-end",
+      justifyContent: "center",
+      gap: 4,
+      height: 250,
+    }}>
+      {bars.map((height, i) => (
+        <div key={i} style={{
+          width: 8,
+          height,
+          background: "linear-gradient(to top, #ff0055, #ff8800)",
+          borderRadius: 4,
+        }} />
+      ))}
+    </div>
+  );
+};
+```
+
+**Alternativas de visualización:**
+- **Circular/Radial**: Barras distribuidas en círculo alrededor de centro
+- **Wave line**: SVG path con smooth curve basada en samples
+- **Spectrum**: Frecuencias bajas, medias, altas con colores distintos
+
+### Variantes de audiogram
+
+| Estilo | Uso | Config |
+|---|---|---|
+| **Classic bars** | Podcast clips | 64 samples, bar width 6-10px, gradient warm |
+| **Circular** | Music visualizer | 128 samples, radius 200px, neon colors |
+| **Minimal line** | Professional/corporate | 256 samples, single path, white on dark |
+| **Reaction video** | Bottom overlay | 32 samples, large bars, covers bottom 30% |
+
+---
+
+## `<Series>` + Premounting (Performance)
+
+`<Series>` ahorra calcular `from` manualmente — los items se encadenan automáticamente.
+
+```tsx
+import { Series } from "remotion";
+
+<Series>
+  <Series.Sequence durationInFrames={90}>
+    <Intro />
+  </Series.Sequence>
+  <Series.Sequence durationInFrames={180}>
+    <SegmentoA />
+  </Series.Sequence>
+  <Series.Sequence durationInFrames={120}>
+    <SegmentoB />
+  </Series.Sequence>
+</Series>
+```
+
+**Premounting**: Pre-carga un componente N frames antes de que aparezca. Elimina stutter en renders largos.
+
+```tsx
+<Sequence from={300} durationInFrames={120}>
+  <Sequence premountFor={30}>  {/* preload 30 frames antes */}
+    <EscenaCompleja />
+  </Sequence>
+</Sequence>
+```
+
+Regla: premount todo componente que cargue assets grandes (videos, imágenes, fuentes, Lottie).
+
+---
+
+## `<Still>` — Thumbnails y Social Cards
+
+Exporta un frame único como PNG/JPEG para thumbnails de YouTube, Twitter cards, OG images.
+
+```tsx
+import { Still } from "remotion";
+
+export const RemotionRoot = () => (
+  <>
+    <Composition id="Video" component={MiVideo} durationInFrames={900} fps={30} width={1920} height={1080} />
+    <Still id="Thumbnail" component={ThumbnailComponent} width={1280} height={720} />
+  </>
+);
+```
+
+```bash
+# Render thumbnail
+npx remotion still Thumbnail out/thumbnail.png --frame=150
+```
+
+**Uso común:** Frame en el peak del video (momento más visualmente interesante).
+
+---
+
+## Dynamic Metadata (`calculateMetadata`)
+
+Cuando la duración del video depende de datos externos (ej: podcast de duración variable, video generado desde API).
+
+```tsx
+import { Composition, CalculateMetadataFunction } from "remotion";
+
+const calculateMetadata: CalculateMetadataFunction<MyProps> = async ({
+  props,
+  abortSignal,
+}) => {
+  // Fetch data o medir duración de audio
+  const audioDuration = await getAudioDuration(props.audioSrc);
+
+  return {
+    durationInFrames: Math.ceil(audioDuration * 30),  // 30fps
+    width: 1920,
+    height: 1080,
+    props: {
+      ...props,
+      duration: audioDuration,
+    },
+  };
+};
+
+export const RemotionRoot = () => (
+  <Composition
+    id="DynamicVideo"
+    component={MiVideo}
+    fps={30}
+    width={1920}
+    height={1080}
+    defaultProps={{ audioSrc: staticFile("audio.mp3") }}
+    calculateMetadata={calculateMetadata}
+  />
+);
+```
+
+**Casos de uso:**
+- Podcast visualizer: duración = duración del audio
+- Batch generation: duración = longitud del script JSON
+- API-driven: duración = datos del servidor
+
+---
+
 ## Export y Render
 
 ```bash
@@ -340,8 +576,20 @@ npx remotion lambda render <site-id> MiComp out/video.mp4
 
 ---
 
+## Pitfalls
+
+### Defaulting to SaaS/product assumptions
+This skill is for **content creators** (YouTube, TikTok, Reels, podcasts, motion graphics), not SaaS explainer videos. Unless the user explicitly says "SaaS promo", "feature announcement", or "product demo", assume content creation context. Always ask: "¿qué tipo de contenido y para qué plataforma?" before proposing templates.
+
+### Forgetting visual design system
+Remotion handles motion, not aesthetics. Always pair with `frontend-design` (or equivalent design skill) to define palette, typography, and spacing before animating. Code-first without a design system produces generic "AI slop" video.
+
+### Ignoring platform specs
+A video that looks good in Remotion Studio at 1920x1080 may be unreadable on TikTok mobile. Preview at target resolution and test text legibility at 50% scale.
+
 ## References
 
 - [references/timing-cheatsheet.md](references/timing-cheatsheet.md) — Curvas Bézier copy-paste, configs spring, duraciones por tipo de motion
 - [references/platform-templates.md](references/platform-templates.md) — Templates por plataforma: YouTube intro, TikTok hook, Instagram reel, podcast visualizer
 - [references/subtitle-pipeline.md](references/subtitle-pipeline.md) — Generar subtítulos desde SRT/VTT, sincronización word-by-word, estilos por plataforma
+- [references/advanced-features.md](references/advanced-features.md) — TikTok captions, audio waveform visualizer, Lottie, light leaks, GIFs, `<Series>`, `<Still>`, FFmpeg, dynamic metadata
