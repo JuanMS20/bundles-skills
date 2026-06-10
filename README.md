@@ -10,7 +10,8 @@ Diseñado para [Hermes Agent](https://hermes-agent.nousresearch.com) por Nous Re
 
 ```
 .
-├── bundles/              # 9 YAMLs — pipelines multi-skill secuenciales
+├── bundles/              # 10 YAMLs — pipelines multi-skill secuenciales
+│   ├── el-buhonero.yaml
 │   ├── plan-sprint.yaml
 │   ├── dev-cycle.yaml
 │   ├── qa-bundle.yaml
@@ -20,7 +21,7 @@ Diseñado para [Hermes Agent](https://hermes-agent.nousresearch.com) por Nous Re
 │   ├── doc-forge.yaml
 │   ├── skill-forge.yaml
 │   └── video-studio.yaml
-├── skills/               # 28 skills — las que usan los bundles
+├── skills/               # 30 skills — las que usan los bundles
 │   ├── code-review/
 │   ├── creative/frontend-design/
 │   ├── creative/remotion-video/
@@ -53,6 +54,7 @@ Cada bundle carga múltiples skills en orden y orquesta fases secuenciales con g
 | **doc-forge** | `project-mapper` → `manual-writer` → `pdf-export` | Documentación: mapear → escribir manual → exportar PDF |
 | **skill-forge** | `write-a-skill` → `write-stack-skill` | Creación y auditoría de skills |
 | **video-studio** | `remotion-video` → `frontend-design` → `grill-with-docs` → `zoom-out` → `qa-testing` | Edición profesional de video: vlogs, tutoriales, TikTok, YouTube, podcasts, entrevistas, motion graphics. Desde concepto hasta render |
+| **el-buhonero** | `grill-me` → `graphify` → `zoom-out` → `anti-hallucination` → `diagnose` | Orientador de flujo: no sabes qué bundle usar. Analiza codebase, diagnostica, y recomienda el pipeline correcto |
 
 ### Flujo de desarrollo completo
 
@@ -75,15 +77,18 @@ No todos los proyectos necesitan todos los bundles. Las fases se adaptan al tipo
 | **Security audit puntual** | judge (solo FASE 3) | Independiente |
 | **Documentación sola** | doc-forge | Independiente |
 | **Video promocional / contenido** | video-studio | Independiente. Usa grill-with-docs para definir concepto, audiencia, plataforma y estilo antes de editar |
+| **No sé qué bundle usar** | el-buhonero | Siempre. Usa grill-me para clarificar, graphify para mapear, y recomienda el flujo correcto |
+| **Exploración de codebase desconocida** | el-buhonero | Primero, antes de cualquier bundle. Entiende el proyecto antes de actuar |
 
 ---
 
 ## Skills
 
-Las 29 skills en `skills/` son las únicas referenciadas por los 9 bundles. Están organizadas por dominio:
+Las 30 skills en `skills/` son las únicas referenciadas por los 10 bundles. Están organizadas por dominio:
 
 ### Matt Pocock (flujo de ingeniería)
 - `grill-with-docs` — Stress-test de ideas contra documentación
+- `grill-me` — Interrogar al usuario hasta que la petición sea clara
 - `to-prd` — Convertir contexto en PRD formal
 - `to-issues` — Descomponer PRD en issues independientes
 - `zoom-out` — Panorama amplio cuando no entiendes el código
@@ -93,8 +98,9 @@ Las 29 skills en `skills/` son las únicas referenciadas por los 9 bundles. Est�
 - `handoff` — Compactar sesión para el siguiente agente
 - `write-a-skill` — Crear skills con estructura progresiva
 
-### General (calidad y verificación)
+### General (calidad, verificación y orientación)
 - `anti-hallucination` — Verificación de APIs y datos, evidence-first
+- `graphify` — Mapear codebase en knowledge graph con análisis de arquitectura y dependencias
 - `qa-testing` — Testing sistemático con TODOs estructurados
 - `user-chaos-tester` — Testing como usuario torpe, busca anomalías de flujo
 - `reverse-audit` — Auditoría ofensiva desde fuera del sistema
