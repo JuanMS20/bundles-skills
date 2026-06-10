@@ -10,8 +10,9 @@ Diseñado para [Hermes Agent](https://hermes-agent.nousresearch.com) por Nous Re
 
 ```
 .
-├── bundles/              # 10 YAMLs — pipelines multi-skill secuenciales
+├── bundles/              # 11 YAMLs — pipelines multi-skill secuenciales
 │   ├── el-buhonero.yaml
+│   ├── math-engineer.yaml
 │   ├── plan-sprint.yaml
 │   ├── dev-cycle.yaml
 │   ├── qa-bundle.yaml
@@ -21,7 +22,7 @@ Diseñado para [Hermes Agent](https://hermes-agent.nousresearch.com) por Nous Re
 │   ├── doc-forge.yaml
 │   ├── skill-forge.yaml
 │   └── video-studio.yaml
-├── skills/               # 32 skills — las que usan los bundles + standalone
+├── skills/               # 33 skills — las que usan los bundles + standalone
 │   ├── code-review/
 │   ├── creative/frontend-design/
 │   ├── creative/remotion-video/
@@ -55,6 +56,7 @@ Cada bundle carga múltiples skills en orden y orquesta fases secuenciales con g
 | **skill-forge** | `write-a-skill` → `write-stack-skill` | Creación y auditoría de skills |
 | **video-studio** | `remotion-video` → `frontend-design` → `grill-with-docs` → `zoom-out` → `qa-testing` | Edición profesional de video: vlogs, tutoriales, TikTok, YouTube, podcasts, entrevistas, motion graphics. Desde concepto hasta render |
 | **el-buhonero** | `graphify` → `zoom-out` → `anti-hallucination` | Orientador de flujo: llegas a un repo desconocido, entiende el código y recomienda el pipeline correcto |
+| **math-engineer** | `math-consultant` → `anti-hallucination` → `zoom-out` | Validación matemática: revisa cálculos de física, geometría, probabilidad. Detecta errores y proporciona fórmulas corregidas |
 
 ### Flujo de desarrollo completo
 
@@ -80,6 +82,7 @@ No todos los proyectos necesitan todos los bundles. Las fases se adaptan al tipo
 | **No sé qué bundle usar** | el-buhonero | Siempre. Usa grill-me para clarificar, graphify para mapear, y recomienda el flujo correcto |
 | **Exploración de codebase desconocida** | el-buhonero | Primero, antes de cualquier bundle. Entiende el proyecto antes de actuar |
 | **No sé qué bundle usar (auto-detectado)** | repo-onboarding | Automático. Si el agente detecta repo nuevo sin contexto, carga esta skill primero y recomienda el bundle |
+| **Cálculos matemáticos / física de juego** | math-engineer | Cuando la lógica numérica "casi funciona" o necesitas verificar fórmulas antes de implementar |
 
 ---
 
@@ -102,6 +105,7 @@ Las 32 skills en `skills/` son las únicas referenciadas por los 10 bundles, má
 ### General (calidad, verificación y orientación)
 - `anti-hallucination` — Verificación de APIs y datos, evidence-first
 - `graphify` — Mapear codebase en knowledge graph con análisis de arquitectura y dependencias
+- `math-consultant` — Revisar cálculos matemáticos, detectar errores, proporcionar fórmulas corregidas para física, geometría, y probabilidad
 - `repo-onboarding` — Onboarding automático de repos desconocidos: mapear, analizar, recomendar bundle
 - `qa-testing` — Testing sistemático con TODOs estructurados
 - `user-chaos-tester` — Testing como usuario torpe, busca anomalías de flujo
