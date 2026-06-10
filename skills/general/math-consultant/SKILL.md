@@ -5,12 +5,18 @@ description: |
   y detecta errores en la lógica numérica de tu código.
   
   Use cuando:
-  - Necesites verificar si una fórmula de física/salto/movimiento está correcta
-  - Quieras calcular distancias, ángulos, colisiones, o trayectorias
+  - Necesites verificar fórmulas de física, geometría, o probabilidad
+  - Quieras calcular distancias, ángulos, colisiones, trayectorias, rotaciones
   - Necesites diseñar probabilidades (loot tables, spawn rates, randomness)
   - Tu código tenga cálculos que "casi funcionan" pero no sabes por qué
+  - Trabajes con matrices, transformaciones 3D, pathfinding, o generación procedural
+  - Necesites optimizar parámetros, balancear juegos, o analizar datos
   
-  No es un solver simbólico (no resuelve ecuaciones complejas).
+  Domains cubiertos: física, geometría, probabilidad, matrices 3D, pathfinding,
+  interpolación, generación procedural, ecuaciones diferenciales, optimización,
+  teoría de juegos, spatial hashing, estadística avanzada.
+  
+  No es un solver simbólico (no resuelve ecuaciones complejas de forma algebraica).
   Es un revisor de cálculos que detecta errores comunes y proporciona fórmulas verificadas.
 ---
 
@@ -20,10 +26,27 @@ description: |
 
 "Tienes un cálculo en tu código. ¿Está bien? ¿Qué estás omitiendo? ¿Hay una fórmula más simple?"
 
+## Domains Cubiertos
+
+| Domain | Qué revisa | Fórmulas disponibles |
+|---|---|---|
+| Física | Salto, movimiento, colisiones, fricción, gravedad | 40+ en physics-formulas.md |
+| Geometría | Vectores, distancias, ángulos, raycasting, rotaciones | 60+ en geometry-formulas.md |
+| Probabilidad | Loot tables, spawn rates, distribuciones, randomness | 30+ en probability-formulas.md |
+| Matrices 3D | Transformaciones, cámaras, quaternions, proyecciones | 40+ en matrices-transformations.md |
+| Pathfinding | A*, Dijkstra, BFS, navmesh, steering, flow fields | 50+ en pathfinding.md |
+| Interpolación | Easing, Bézier, splines, animation curves | 40+ en interpolation-procedural.md |
+| Procedural | Perlin noise, fractals, L-systems, terrain | 30+ en interpolation-procedural.md |
+| Ecuaciones dif. | Springs, pendulums, órbitas, integración numérica | 20+ en advanced-math.md |
+| Optimización | Gradient descent, simulated annealing, genetic | 15+ en advanced-math.md |
+| Teoría de juegos | Minimax, MCTS, expectiminimax | 15+ en advanced-math.md |
+| Spatial hashing | Grid, quadtree, octree, R-tree | 20+ en advanced-math.md |
+| Estadística | Regresión, Bayes, Markov, A/B testing | 25+ en advanced-math.md |
+
 ## Patrón de uso
 
 1. El usuario proporciona código con cálculos (o describe el problema)
-2. El consultor identifica el dominio (física, geometría, probabilidad)
+2. El consultor identifica el dominio (física, geometría, probabilidad, matrices, pathfinding, etc.)
 3. Revisa la fórmula contra referencias conocidas
 4. Detecta errores: unidades mal, fórmulas incompletas, edge cases
 5. Proporciona corrección o fórmula alternativa
@@ -255,13 +278,28 @@ Toda operación por frame debe multiplicarse por `delta`. `posicion += velocidad
 ### Usar floats para dinero/contadores
 Nunca usar `float` para valores que deben ser exactos (dinero, contadores de items). Usar `int` o `decimal`.
 
-### Asumir distribución uniforme
-`random()` es uniforme. Si necesitás más valores intermedios, usar distribución normal. Si necesitás valores extremos, usar distribución exponencial.
+### Asumir física realista para juegos
+Los juegos NO usan física realista. Usan "física arcade" que se siente bien, no que es correcta físicamente.
+
+- Gravedad en juegos de plataforma es ~5-10x la real para que el salto sea snappy
+- Fricción es exagerada para evitar que el personaje deslice eternamente
+- Colisiones usan AABB simplificado en lugar de mesh exacto
+- "Coyote time" permite saltar 100ms después de dejar el suelo
+- "Jump buffering" acepta input de salto 100ms antes de tocar el suelo
+
+**Regla:** Si el usuario dice "mi salto no se siente bien", NO calcular con g=9.8 m/s². Preguntar: "¿Qué tan 'floaty' o 'snappy' querés que sea?" y ajustar la gravedad artísticamente. Las fórmulas de la skill son la base matemática; los valores de los parámetros son decisiones de diseño.
+
+### Ignorar el contexto del motor
+Unity usa `FixedUpdate` con `Time.fixedDeltaTime`. Godot usa `_physics_process` con `delta`. Asegurar que la fórmula coincida con el ciclo de física del motor.
 
 ---
 
 ## References
 
-- [references/physics-formulas.md](references/physics-formulas.md) — Fórmulas de cinemática, salto, colisiones, movimiento
-- [references/geometry-formulas.md](references/geometry-formulas.md) — Vectores, distancias, ángulos, dot/cross product, raycasting
-- [references/probability-formulas.md](references/probability-formulas.md) — Loot tables, spawn rates, distribuciones, randomness
+- [references/physics-formulas.md](references/physics-formulas.md) — Física: cinemática, salto, colisiones, movimiento
+- [references/geometry-formulas.md](references/geometry-formulas.md) — Geometría: vectores, distancias, ángulos, raycasting
+- [references/probability-formulas.md](references/probability-formulas.md) — Probabilidad: loot tables, spawn rates, randomness
+- [references/matrices-transformations.md](references/matrices-transformations.md) — Matrices 3D: transformaciones, cámaras, quaternions, proyecciones
+- [references/pathfinding.md](references/pathfinding.md) — Pathfinding: A*, Dijkstra, BFS, navmesh, steering, flow fields
+- [references/interpolation-procedural.md](references/interpolation-procedural.md) — Interpolación: easing, Bézier, splines; Procedural: Perlin noise, fractals, L-systems
+- [references/advanced-math.md](references/advanced-math.md) — Ecuaciones diferenciales, optimización, teoría de juegos, spatial hashing, estadística
