@@ -21,7 +21,7 @@ Diseñado para [Hermes Agent](https://hermes-agent.nousresearch.com) por Nous Re
 │   ├── doc-forge.yaml
 │   ├── skill-forge.yaml
 │   └── video-studio.yaml
-├── skills/               # 30 skills — las que usan los bundles
+├── skills/               # 32 skills — las que usan los bundles + standalone
 │   ├── code-review/
 │   ├── creative/frontend-design/
 │   ├── creative/remotion-video/
@@ -54,7 +54,7 @@ Cada bundle carga múltiples skills en orden y orquesta fases secuenciales con g
 | **doc-forge** | `project-mapper` → `manual-writer` → `pdf-export` | Documentación: mapear → escribir manual → exportar PDF |
 | **skill-forge** | `write-a-skill` → `write-stack-skill` | Creación y auditoría de skills |
 | **video-studio** | `remotion-video` → `frontend-design` → `grill-with-docs` → `zoom-out` → `qa-testing` | Edición profesional de video: vlogs, tutoriales, TikTok, YouTube, podcasts, entrevistas, motion graphics. Desde concepto hasta render |
-| **el-buhonero** | `grill-me` → `graphify` → `zoom-out` → `anti-hallucination` → `diagnose` | Orientador de flujo: no sabes qué bundle usar. Analiza codebase, diagnostica, y recomienda el pipeline correcto |
+| **el-buhonero** | `graphify` → `zoom-out` → `anti-hallucination` | Orientador de flujo: llegas a un repo desconocido, entiende el código y recomienda el pipeline correcto |
 
 ### Flujo de desarrollo completo
 
@@ -79,12 +79,13 @@ No todos los proyectos necesitan todos los bundles. Las fases se adaptan al tipo
 | **Video promocional / contenido** | video-studio | Independiente. Usa grill-with-docs para definir concepto, audiencia, plataforma y estilo antes de editar |
 | **No sé qué bundle usar** | el-buhonero | Siempre. Usa grill-me para clarificar, graphify para mapear, y recomienda el flujo correcto |
 | **Exploración de codebase desconocida** | el-buhonero | Primero, antes de cualquier bundle. Entiende el proyecto antes de actuar |
+| **No sé qué bundle usar (auto-detectado)** | repo-onboarding | Automático. Si el agente detecta repo nuevo sin contexto, carga esta skill primero y recomienda el bundle |
 
 ---
 
 ## Skills
 
-Las 30 skills en `skills/` son las únicas referenciadas por los 10 bundles. Están organizadas por dominio:
+Las 32 skills en `skills/` son las únicas referenciadas por los 10 bundles, más skills standalone. Están organizadas por dominio:
 
 ### Matt Pocock (flujo de ingeniería)
 - `grill-with-docs` — Stress-test de ideas contra documentación
@@ -101,6 +102,7 @@ Las 30 skills en `skills/` son las únicas referenciadas por los 10 bundles. Est
 ### General (calidad, verificación y orientación)
 - `anti-hallucination` — Verificación de APIs y datos, evidence-first
 - `graphify` — Mapear codebase en knowledge graph con análisis de arquitectura y dependencias
+- `repo-onboarding` — Onboarding automático de repos desconocidos: mapear, analizar, recomendar bundle
 - `qa-testing` — Testing sistemático con TODOs estructurados
 - `user-chaos-tester` — Testing como usuario torpe, busca anomalías de flujo
 - `reverse-audit` — Auditoría ofensiva desde fuera del sistema
