@@ -19,14 +19,22 @@ instruction: |
 
   ## FASE 1 — Mapear la codebase
   
-  Si hay un directorio de proyecto (pwd o path proporcionado):
+  ### Intentar con graphify (code-only, sin API key)
   ```
-  /graphify . --update
+  graphify <path> --no-viz
   ```
-  Leer `graphify-out/GRAPH_REPORT.md` para entender:
+  
+  Si funciona (repos de código puro), leer `graphify-out/GRAPH_REPORT.md` para:
   - God nodes (archivos/funciones críticas)
   - Communities (módulos separados)
   - Surprises (dependencias circulares, código muerto, etc.)
+  
+  ### Si graphify falla (falta API key para docs/semantic)
+  No detenerse. Caer directamente a FASE 2 con `zoom-out` como alternativa completa.
+  Graphify NO es obligatorio — es un acelerador cuando está disponible.
+  
+  ### Fallback manual (siempre ejecutar, complementa graphify)
+  Usar `zoom-out` para obtener panorama del proyecto leyendo archivos clave directamente.
   
   ## FASE 2 — Ver el panorama
   
@@ -120,8 +128,8 @@ instruction: |
 
   ## Skills disponibles en este bundle
   
-  - `graphify` — Mapear codebase en knowledge graph
-  - `zoom-out` — Ver panorama de proyecto
+  - `graphify` — Mapear codebase en knowledge graph (code-only, sin API key. Si falla, usar zoom-out)
+  - `zoom-out` — Ver panorama de proyecto (fallback completo si graphify no está disponible)
   - `anti-hallucination` — Verificar conclusiones contra evidencia real
 
   ## Referencias
