@@ -10,7 +10,7 @@ Diseñado para [Hermes Agent](https://hermes-agent.nousresearch.com) por Nous Re
 
 ```
 .
-├── bundles/              # 11 YAMLs — pipelines multi-skill secuenciales
+├── bundles/              # 12 YAMLs — pipelines multi-skill secuenciales
 │   ├── el-buhonero.yaml
 │   ├── math-engineer.yaml
 │   ├── plan-sprint.yaml
@@ -20,9 +20,10 @@ Diseñado para [Hermes Agent](https://hermes-agent.nousresearch.com) por Nous Re
 │   ├── user-chaos.yaml
 │   ├── close-out.yaml
 │   ├── doc-forge.yaml
+│   ├── product-sense.yaml
 │   ├── skill-forge.yaml
 │   └── video-studio.yaml
-├── skills/               # 33 skills — las que usan los bundles + standalone
+├── skills/               # 34 skills — las que usan los bundles + standalone
 │   ├── code-review/
 │   ├── creative/frontend-design/
 │   ├── creative/remotion-video/
@@ -56,7 +57,8 @@ Cada bundle carga múltiples skills en orden y orquesta fases secuenciales con g
 | **skill-forge** | `write-a-skill` → `write-stack-skill` | Creación y auditoría de skills |
 | **video-studio** | `remotion-video` → `frontend-design` → `grill-with-docs` → `zoom-out` → `qa-testing` | Edición profesional de video: vlogs, tutoriales, TikTok, YouTube, podcasts, entrevistas, motion graphics. Desde concepto hasta render |
 | **el-buhonero** | `graphify` → `zoom-out` → `anti-hallucination` | Orientador de flujo: llegas a un repo desconocido, entiende el código y recomienda el pipeline correcto |
-| **math-engineer** | `math-consultant` → `anti-hallucination` → `zoom-out` | Validación matemática: revisa cálculos de física, geometría, probabilidad. Detecta errores y proporciona fórmulas corregidas |
+|| **math-engineer** | `math-consultant` → `anti-hallucination` → `zoom-out` | Validación matemática: revisa cálculos de física, geometría, probabilidad. Detecta errores y proporciona fórmulas corregidas |
+|| **product-sense** | `zoom-out` → `grill-me` → `competitive-intelligence` | Pensamiento crítico de producto: ¿es realmente útil? ¿alguien lo usaría? Auditoría de features, redundancias, valor real |
 
 ### Flujo de desarrollo completo
 
@@ -83,12 +85,13 @@ No todos los proyectos necesitan todos los bundles. Las fases se adaptan al tipo
 | **Exploración de codebase desconocida** | el-buhonero | Primero, antes de cualquier bundle. Entiende el proyecto antes de actuar |
 | **No sé qué bundle usar (auto-detectado)** | repo-onboarding | Automático. Si el agente detecta repo nuevo sin contexto, carga esta skill primero y recomienda el bundle |
 | **Cálculos matemáticos / física de juego** | math-engineer | Cuando la lógica numérica "casi funciona" o necesitas verificar fórmulas antes de implementar |
+| **¿Esto es realmente útil?** | product-sense | Cuando el software funciona pero preguntas si alguien lo usaría, si hay features redundantes, o si da valor real |
 
 ---
 
 ## Skills
 
-Las 32 skills en `skills/` son las únicas referenciadas por los 10 bundles, más skills standalone. Están organizadas por dominio:
+Las 34 skills en `skills/` son las únicas referenciadas por los 12 bundles, más skills standalone. Están organizadas por dominio:
 
 ### Matt Pocock (flujo de ingeniería)
 - `grill-with-docs` — Stress-test de ideas contra documentación
@@ -107,6 +110,7 @@ Las 32 skills en `skills/` son las únicas referenciadas por los 10 bundles, má
 - `graphify` — Mapear codebase en knowledge graph con análisis de arquitectura y dependencias
 - `math-consultant` — Revisar cálculos matemáticos, detectar errores, proporcionar fórmulas corregidas para física, geometría, y probabilidad
 - `repo-onboarding` — Onboarding automático de repos desconocidos: mapear, analizar, recomendar bundle
+- `competitive-intelligence` — Investigador topo: teardown sistemático de competidores, features, pricing, estrategias
 - `qa-testing` — Testing sistemático con TODOs estructurados
 - `user-chaos-tester` — Testing como usuario torpe, busca anomalías de flujo
 - `reverse-audit` — Auditoría ofensiva desde fuera del sistema
